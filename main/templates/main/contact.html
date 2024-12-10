@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock %}
+
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded">
+        <div class="container p-4">
+            <h2 class="m-2"><strong>Контакты</strong></h2>
+            <p class="m-2"><strong>Телефон:</strong> {{ contact_info.phone }}</p>
+            <p class="m-2"><strong>Email:</strong> <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a></p>
+            <p class="m-2"><strong>Адрес:</strong> {{ contact_info.address }}</p>
+        </div>
+    </div>
+{% endblock %}

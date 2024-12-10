@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock  %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mb-4 custom-shadow">
+        <div class="row">
+            <!-- Миниатюры -->
+            <div class="col-md-4">
+                <img src="{{ product.image.url }}"
+                    class="img-thumbnail" data-bs-toggle="modal" data-bs-target="#imageModal1">
+            </div>
+            <div class="col-md-4 ">
+                <p class="product_id mt-3">id: {{ product.display_id }}</p>
+            </div>
+            <!-- Увеличить изображение в модальном окне -->
+            <div class="modal fade" id="imageModal1" tabindex="-1"
+                aria-labelledby="imageModal1Label" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imageModal1Label">{{ product.name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Закрыть"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="{{ product.image.url }}"
+                                class="img-fluid" alt="Изображение 1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Описание товара -->
+        <div class="card-body">
+            <p class="card-text">Цена: <strong>{{ product.sell_price }} $</strong></p>
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <!-- HTML кнопки для добавления товара в корзину -->
+            <button id="add-to-cart" data-product-id="{{ product.id }}">Добавить в корзину</button>
+
+            <div id="cart-message" style="display:none; background-color: #4CAF50; color: white; padding: 10px; margin-top: 10px;">
+                Товар добавлен в корзину
+            </div>
+            
+            <meta name="csrf-token" content="{{ csrf_token }}">
+            
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $('#add-to-cart').click(function() {
+                        var productId = $(this).data('product-id');
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            
+                        $.ajax({
+                            url: '{% url "cart:cart_add" %}',
+                            type: 'POST',
+                            data: {
+                                product_id: productId,
+                                csrfmiddlewaretoken: csrfToken
+                            },
+                            success: function(response) {
+                                // Показать сообщение
+                                $('#cart-message').fadeIn().delay(2000).fadeOut();
+            
+                                // Обновить корзину на странице
+                                $('#cart-items').html(response.cart_items_html);
+                            },
+                            error: function() {
+                                alert('Ошибка при добавлении товара в корзину');
+                            }
+                        });
+                    });
+                });
+            </script>
+            
+            
+        </div>
+    </div>
+</div>
+{% endblock  %}

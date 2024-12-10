@@ -1,0 +1,128 @@
+{% load static %}
+
+<div id="cart-container">
+    {% if carts %}
+    <div class="card mb-3 text-bg-light shadow-lg">
+        {% for cart in carts %}
+        <div class="card-header">
+            <h5 class="card-title">{{ cart.product.name }}</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row text-center">
+                    <div class="col p-0">
+                        <div class="input-group">
+                            <button type="button" class="btn btn-dark btn-sm decrement"
+                                    data-cart-id="{{ cart.id }}"
+                                    data-url="{% url 'cart:cart_change' %}">
+                                -
+                            </button>
+                            <input type="text" class="form-control text-center" value="{{ cart.quantity }}" readonly>
+                            <button type="button" class="btn btn-dark btn-sm increment"
+                                    data-cart-id="{{ cart.id }}"
+                                    data-url="{% url 'cart:cart_change' %}">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col p-0">
+                        <p>x {{ cart.product.sell_price }} =</p>
+                    </div>
+                    <div class="col p-0">
+                        <strong>{{ cart.products_price }} $</strong>
+                    </div>
+                    <div class="col p-0">
+                        <button type="button" class="btn btn-danger btn-sm remove-from-cart"
+                                data-cart-id="{{ cart.id }}"
+                                data-url="{% url 'cart:cart_remove' %}">
+                            <img src="{% static 'deps/icons/trash3-fill.svg' %}" alt="Удалить" width="16" height="16">
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        {% endfor %}
+    </div>
+
+    <div class="card mb-3 shadow-lg">
+        <div class="card-footer">
+            <p class="float-left">Итого: <strong>{{ carts.total_quantity }}</strong> товар(а) на сумму:</p>
+            <h4 class="float-left"><strong>{{ carts.total_price }} $</strong></h4>
+        </div>
+    </div>
+
+    {% if not order %}
+    <a class="btn btn-dark" href="{% url 'orders:create_order' %}">
+        Оформить заказ
+    </a>
+    {% endif %}
+    {% else %}
+    <div class="card text-center shadow-lg">
+        <div class="card-body">
+            <h5 class="card-title">Ваша корзина пуста</h5>
+            <p class="card-text">Добавьте товары, чтобы начать покупки.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<meta name="csrf-token" content="{{ csrf_token }}">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        // Увеличить количество товара
+        $('.increment').click(function() {
+            const cartId = $(this).data('cart-id');
+            const url = $(this).data('url');
+            updateCart(cartId, 1, url);
+        });
+
+        // Уменьшить количество товара
+        $('.decrement').click(function() {
+            const cartId = $(this).data('cart-id');
+            const url = $(this).data('url');
+            updateCart(cartId, -1, url);
+        });
+
+        // Удалить товар
+        $('.remove-from-cart').click(function() {
+            const cartId = $(this).data('cart-id');
+            const url = $(this).data('url');
+            removeFromCart(cartId, url);
+        });
+
+        // Обновление корзины
+        function updateCart(cartId, quantityChange, url) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    cart_id: cartId,
+                    quantity_change: quantityChange,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function(response) {
+                    $('#cart-container').html(response.cart_html);
+                }
+            });
+        }
+
+        // Удалить товар из корзины
+        function removeFromCart(cartId, url) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    cart_id: cartId,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function(response) {
+                    $('#cart-container').html(response.cart_html);
+                }
+            });
+        }
+    });
+</script>

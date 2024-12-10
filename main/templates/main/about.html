@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock %}
+
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="mt-5 pt-5 bg-white custom-shadow rounded">
+        <div class="container p-4">
+            <h2 class="m-2"><strong>{{ title }}</strong></h2>
+            <p class="m-2">{{ content }}</p>
+            <p class="m-2">{{ text_on_page }}</p>
+            
+            <h3 class="mt-4">Специальные предложения</h3>
+            <p class="m-2">{{ special_offers }}</p>
+            
+            <h3 class="mt-4">Категории товаров:</h3>
+            <ul class="m-2">
+                {% for category in categories %}
+                    <li>{{ category }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3 class="mt-4">Фотогалерея:</h3>
+            <div class="row">
+                {% for photo in photos %}
+                    <div class="col-md-4 text-center mb-4">
+                        <img src="{% static 'images/'|add:photo.filename %}" alt="{{ photo.description }}" class="img-fluid rounded">
+                        <p>{{ photo.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+

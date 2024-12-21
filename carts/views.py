@@ -5,9 +5,7 @@ from django.views import View
 from carts.mixins import CartMixin
 from carts.models import Cart
 from carts.utils import get_user_carts
-
 from goods.models import Products
-
 
 class CartAddView(CartMixin, View):
     def post(self, request):

@@ -48,10 +48,6 @@
                                 <li><a class="dropdown-item text-white" href="{% url 'main:about' %}">Про нас</a></li>
                             </ul>
                         </li>
-                        <!-- Вставка в навигацию -->
-                        <li class="nav-item">
-                              <a class="nav-link text-white" href="{% url 'chat:chat' %}">Чат</a>
-                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link text-white" href="{% url 'user:users_cart' %}">Корзина <span id="cart-count" class="badge bg-danger">{{ cart_item_count }}</span></a>

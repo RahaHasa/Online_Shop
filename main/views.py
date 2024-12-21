@@ -12,7 +12,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Online-Shop'
-        context['content'] = ""
+    
         return context
 
 class AboutView(TemplateView):
